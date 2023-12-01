@@ -4,6 +4,7 @@
         "editor.formatOnType": true,
         "editor.formatOnSave": true 
     },
+    "rust-analyzer.diagnostics.warningsAsHint": ["dead_code"],
     "rust-analyzer.rustfmt.enableRangeFormatting": true,
     "rust-analyzer.cargo.buildScripts.useRustcWrapper": false
 }
