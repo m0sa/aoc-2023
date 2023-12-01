@@ -27,7 +27,23 @@
 	"postCreateCommand": "sudo chown -R vscode:rustlang /usr/local/cargo/",
 
 	// Configure tool-specific properties.
-	// "customizations": {},
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"[rust]": {
+					"editor.defaultFormatter": "rust-lang.rust-analyzer", 
+					"editor.formatOnType": true,
+					"editor.formatOnSave": true 
+				},
+				"rust-analyzer.diagnostics.warningsAsHint": ["dead_code"],
+				"rust-analyzer.rustfmt.enableRangeFormatting": true,
+				"rust-analyzer.cargo.buildScripts.useRustcWrapper": false
+			},
+			"extensions": [],
+		},
+	},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
