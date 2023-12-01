@@ -1,0 +1,2 @@
+[profile.test]
+slow-timeout = { period = "10s", terminate-after = 12, grace-period = "10s" }

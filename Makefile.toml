@@ -1,0 +1,16 @@
+[env]
+NEXTEST_FILTER="--tests"
+
+[tasks.install_watch]
+install_crate = "cargo-watch"
+[tasks.install_nextest]
+install_crate = "cargo-nextest"
+
+[tasks.watch]
+dependencies = ["install_watch", "install_nextest"]
+command = "cargo"
+args = ["watch", "--poll", "--why", "-x", "nextest run --verbose --release --offline ${NEXTEST_FILTER}"]
+
+[tasks.today]
+env = { "DAY_OF_MONTH" = { script = ["date +%d"] }, NEXTEST_FILTER = "-E 'test(day${DAY_OF_MONTH})'" }
+run_task = "watch"
