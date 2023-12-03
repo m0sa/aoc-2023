@@ -1,5 +1,5 @@
-use dict::{Dict, DictEntry, DictIface};
-use regex::{Match, Regex};
+use dict::{Dict, DictIface};
+use regex::Regex;
 
 struct Game {
     id: i32,
