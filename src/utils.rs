@@ -21,13 +21,13 @@ pub fn resource(project_relative_path: &str) -> String {
 }
 
 #[derive(Hash, Eq, PartialEq, Debug)]
-pub struct Point2D { 
-    pub x: i32, 
+pub struct Point2D {
+    pub x: i32,
     pub y: i32,
 }
 
 impl From<(i32, i32)> for Point2D {
     fn from(e: (i32, i32)) -> Point2D {
-        return Point2D { x: e.0, y: e.1 };        
+        return Point2D { x: e.0, y: e.1 };
     }
 }
