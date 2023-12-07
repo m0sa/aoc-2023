@@ -5,25 +5,6 @@ type Card = u8;
 const SHIFT: Int = 8; // 8 from u8 in Card
 type Hand = Vec<char>;
 
-const fn card_power(ch: char) -> Card {
-    match ch {
-        'A' => 13,
-        'K' => 12,
-        'Q' => 11,
-        'J' => 10,
-        'T' => 9,
-        '9' => 8,
-        '8' => 7,
-        '7' => 6,
-        '6' => 5,
-        '5' => 4,
-        '4' => 3,
-        '3' => 2,
-        '2' => 1,
-        _ => panic!("unexpected input"),
-    }
-}
-
 const ORDER_1: &str = "23456789TJQKA";
 const ORDER_2: &str = "J23456789TQKA";
 const JOKER: &char = &'J';
