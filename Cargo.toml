@@ -9,4 +9,5 @@ edition = "2021"
 [dependencies]
 regex = "1.10.2"
 dict = "0.1.5"
+num = "0.4.1"
 # itertools = "0.12.0"
