@@ -52,16 +52,18 @@ fn direct_beam(tile_type: char, incoming_direction: Direction) -> Vec<Direction>
     }
 }
 
-fn part1(input: &str) -> usize {
+fn parse_input(input: &str) -> Map {
     let mut map = Map::new();
     for (y, line) in input.trim().split('\n').enumerate() {
         for (x, ch) in line.char_indices() {
             map.insert((x as i32, y as i32).into(), ch);
         }
     }
-    let map = map;
+    return map;
+}
 
-    let mut cur_beams = vec![(Point2D::new(0, 0), Direction::Right)];
+fn count_energized(map: &Map, start_at: Beam) -> usize {
+    let mut cur_beams = vec![start_at];
     let mut visited = HashSet::<Beam>::new();
 
     while cur_beams.len() > 0 {
@@ -93,8 +95,30 @@ fn part1(input: &str) -> usize {
     return visited_positions.len();
 }
 
-fn part2(input: &str) -> u128 {
-    0
+fn part1(input: &str) -> usize {
+    count_energized(&parse_input(input), (Point2D::new(0, 0), Direction::Right))
+}
+
+fn part2(input: &str) -> usize {
+    let map = parse_input(input);
+
+    let mut potential_starts = Vec::<Beam>::new();
+    let max_x = map.keys().map(|p| p.x).max().unwrap();
+    let max_y = map.keys().map(|p| p.y).max().unwrap();
+    for x in 0..=max_x {
+        potential_starts.push((Point2D::new(x, 0), Direction::Down));
+        potential_starts.push((Point2D::new(x, max_y), Direction::Up));
+    }
+    for y in 0..=max_y {
+        potential_starts.push((Point2D::new(0, y), Direction::Right));
+        potential_starts.push((Point2D::new(max_x, y), Direction::Left));
+    }
+
+    potential_starts
+        .into_iter()
+        .map(|b| count_energized(&map, b))
+        .max()
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -123,19 +147,19 @@ mod tests {
     fn part1_result() {
         let input = utils::resource("src/day16.txt");
         let result = part1(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 7415);
     }
 
     #[test]
     fn part2_example() {
         let result = part2(EXAMPLE);
-        assert_eq!(result, 7415)
+        assert_eq!(result, 51)
     }
 
     #[test]
     fn part2_result() {
         let input = utils::resource("src/day16.txt");
         let result = part2(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 7943);
     }
 }
