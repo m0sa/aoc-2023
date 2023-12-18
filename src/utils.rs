@@ -53,6 +53,15 @@ impl Point2D {
     pub fn counter_clockwise(self) -> Point2D {
         (self.y, self.x * -1).into()
     }
+
+    pub fn translate(self, direction: Direction) -> Point2D {
+        self + match direction {
+            Direction::Up => Point2D::new(0, -1),
+            Direction::Right => Point2D::new(1, 0),
+            Direction::Down => Point2D::new(0, 1),
+            Direction::Left => Point2D::new(-1, 0),
+        }
+    }
 }
 
 impl From<(i32, i32)> for Point2D {
@@ -64,3 +73,20 @@ impl From<(i32, i32)> for Point2D {
 impl_op_ex!(+ |a: &Point2D, b: &Point2D| -> Point2D {
     Point2D { x: a.x + b.x, y: a.y + b.y }
 });
+
+impl_op_ex!(*|a: &Point2D, b: &i32| -> Point2D {
+    Point2D {
+        x: a.x * b,
+        y: a.y * b,
+    }
+});
+
+#[derive(Hash, Clone, Copy, PartialEq, Eq)]
+pub enum Direction {
+    Up,
+    Right,
+    Left,
+    Down,
+}
+
+impl Direction {}

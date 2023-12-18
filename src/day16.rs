@@ -1,24 +1,8 @@
-use crate::utils::Point2D;
+use crate::utils::{Direction, Point2D};
 use std::collections::{HashMap, HashSet};
 type Map = HashMap<Point2D, char>;
 type Beam = (Point2D, Direction);
 
-#[derive(Hash, Clone, Copy, PartialEq, Eq)]
-enum Direction {
-    Up,
-    Right,
-    Left,
-    Down,
-}
-fn translate(current: &Point2D, direction: Direction) -> Point2D {
-    current
-        + match direction {
-            Direction::Up => Point2D::new(0, -1),
-            Direction::Right => Point2D::new(1, 0),
-            Direction::Down => Point2D::new(0, 1),
-            Direction::Left => Point2D::new(-1, 0),
-        }
-}
 fn direct_beam(tile_type: char, incoming_direction: Direction) -> Vec<Direction> {
     match tile_type {
         '.' => vec![incoming_direction],
@@ -83,7 +67,7 @@ fn count_energized(map: &Map, start_at: Beam) -> usize {
 
             visited.insert(beam);
             for next_direction in direct_beam(*tile.unwrap(), b_dir) {
-                let next_position = translate(&b_pos, next_direction);
+                let next_position = b_pos.translate(next_direction);
                 next_beams.push((next_position, next_direction));
             }
         }
