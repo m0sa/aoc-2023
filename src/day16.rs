@@ -91,7 +91,7 @@ fn count_energized(map: &Map, start_at: Beam) -> usize {
         cur_beams = next_beams;
     }
 
-    let visited_positions: HashSet<Point2D> = visited.iter().map(|(p, d)| *p).collect();
+    let visited_positions: HashSet<Point2D> = visited.iter().map(|(p, _)| *p).collect();
     return visited_positions.len();
 }
 
