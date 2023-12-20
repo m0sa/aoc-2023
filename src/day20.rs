@@ -29,20 +29,17 @@ enum Signal {
     Low,
 }
 
-fn push_button(
+fn push_button<T>(
     system: &System,
     states_flip_flop: &mut HashMap<String, bool>,
     states_conjunction: &mut HashMap<String, HashMap<String, Signal>>,
-) -> (Int, Int) {
-    let mut highs = 0;
-    let mut lows = 0;
+    handle_signal: &mut T,
+) where
+    T: FnMut(&str, Signal, &str),
+{
     let mut work = vec![("button", Signal::Low, "broadcaster")];
     while let Some((source, signal, receiver)) = work.pop() {
-        // println!("{} -{:#?}- -> {}", source, signal, receiver);
-        match signal {
-            Signal::High => highs += 1,
-            Signal::Low => lows += 1,
-        }
+        handle_signal(source, signal, receiver);
         if let Some((module_type, targets)) = system.get(receiver) {
             let mut next_signal = None;
 
@@ -86,18 +83,17 @@ fn push_button(
             }
         }
     }
-
-    (highs, lows)
 }
 
-fn part1(input: &str, iterations: i32) -> Int {
-    let system = &parse_system(input);
-    let mut highs = 0;
-    let mut lows = 0;
-
+fn init_memory(
+    system: &System,
+) -> (
+    HashMap<String, bool>,
+    HashMap<String, HashMap<String, Signal>>,
+) {
     // init memory
-    let mut states_flip_flop = HashMap::<String, bool>::new();
-    let mut states_conjunction = HashMap::<String, HashMap<String, Signal>>::new();
+    let mut states_flip_flop = HashMap::new();
+    let mut states_conjunction = HashMap::new();
     for (source, (_, targets)) in system {
         for output in targets {
             match system.get(output) {
@@ -114,18 +110,74 @@ fn part1(input: &str, iterations: i32) -> Int {
             }
         }
     }
+    (states_flip_flop, states_conjunction)
+}
 
+fn part1(input: &str, iterations: i32) -> Int {
+    let system = &parse_system(input);
+    let mut highs = 0;
+    let mut lows = 0;
+    let (mut states_flip_flop, mut states_conjunction) = init_memory(system);
     // push button
     for _ in 0..iterations {
-        let (h, l) = push_button(&system, &mut states_flip_flop, &mut states_conjunction);
-        highs += h;
-        lows += l;
+        push_button(
+            &system,
+            &mut states_flip_flop,
+            &mut states_conjunction,
+            &mut |_, signal, _| match signal {
+                Signal::High => {
+                    highs += 1;
+                }
+                Signal::Low => {
+                    lows += 1;
+                } // println!("{} -{:#?}- -> {}", source, signal, receiver);
+            },
+        );
     }
     highs * lows
 }
 
 fn part2(input: &str) -> Int {
-    0
+    let system = &parse_system(input);
+    let (ref mut states_flip_flop, ref mut states_conjunction) = init_memory(system);
+
+    let rx_source = system
+        .iter()
+        .filter_map(|(key, (_, targets))| {
+            if targets.len() == 1 && targets[0] == "rx" {
+                Some(key.clone())
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<String>>();
+
+    // find out how many times we need to press the button to get a high signal into each
+    // of inputs flowing into th the rx_proxy conjunction that sends the low signal to rx
+    let rx_proxy_name = &rx_source[0].to_string();
+    let mut rx_proxy_inputs = HashMap::<String, Int>::new();
+    for (key, _) in &states_conjunction[rx_proxy_name] {
+        rx_proxy_inputs.insert(key.clone(), 0);
+    }
+
+    let mut cnt = 0;
+    loop {
+        if rx_proxy_inputs.values().all(|&x| x > 0) {
+            // luckily those are all primes...
+            return rx_proxy_inputs.values().product();
+        }
+        cnt += 1;
+        push_button(
+            system,
+            states_flip_flop,
+            states_conjunction,
+            &mut |source, signal, _| {
+                if rx_proxy_inputs.contains_key(source) && signal == Signal::High {
+                    rx_proxy_inputs.insert(source.to_string(), cnt);
+                }
+            },
+        );
+    }
 }
 
 #[cfg(test)]
@@ -170,15 +222,9 @@ broadcaster -> a
     }
 
     #[test]
-    fn part2_example() {
-        let result = part2("");
-        assert_eq!(result, 0)
-    }
-
-    #[test]
     fn part2_result() {
         let input = utils::resource("src/day20.txt");
         let result = part2(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 228282646835717);
     }
 }
