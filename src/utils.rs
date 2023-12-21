@@ -89,4 +89,11 @@ pub enum Direction {
     Down,
 }
 
-impl Direction {}
+impl Direction {
+    pub const ALL: &[Direction; 4] = &[
+        Direction::Up,
+        Direction::Right,
+        Direction::Left,
+        Direction::Down,
+    ];
+}
