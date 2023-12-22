@@ -97,3 +97,10 @@ impl Direction {
         Direction::Down,
     ];
 }
+
+pub fn positive_modulo<T>(value: T, modulo: T) -> T
+where
+    T: std::ops::Rem<Output = T> + std::ops::Add<Output = T> + std::marker::Copy,
+{
+    ((value % modulo) + modulo) % modulo
+}
