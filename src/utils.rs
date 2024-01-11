@@ -90,7 +90,7 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub const ALL: &[Direction; 4] = &[
+    pub const ALL: &'static [Direction; 4] = &[
         Direction::Up,
         Direction::Right,
         Direction::Left,

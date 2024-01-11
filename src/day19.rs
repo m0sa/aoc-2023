@@ -3,7 +3,7 @@ use core::panic;
 use std::collections::HashMap;
 type Int = u128;
 type Part = [Int; 4];
-const PartLayout: &str = "xmas";
+const PART_LAYOUT: &str = "xmas";
 
 enum Rule {
     Goto(String),
@@ -64,7 +64,7 @@ fn parse_system(input: &str) -> System {
                 if let Some(then_pos) = rule_str.find(':') {
                     let then_str = rule_str[then_pos + 1..].to_string();
                     let part_char = &rule_str[0..1];
-                    let part_category = PartLayout.find(part_char).unwrap();
+                    let part_category = PART_LAYOUT.find(part_char).unwrap();
                     let operator = rule_str[1..2].chars().nth(0).unwrap();
                     let value = rule_str[2..then_pos].parse::<Int>().unwrap();
 
